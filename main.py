@@ -5,14 +5,17 @@ from datetime import datetime
 import os
 from dotenv import load_dotenv
 
-# main.py
-from config import APP_ID, API_KEY, SHEET_ENDPOINT, TOKEN
-
+app = Flask(__name__)
 
 # Load environment variables from .env file
 load_dotenv()
 
-app = Flask(__name__)
+GENDER = "male"
+WEIGHT_KG = 63
+HEIGHT_CM = 170
+AGE = 21
+
+exercise_endpoint = "https://trackapi.nutritionix.com/v2/natural/exercise"
 
 @app.route('/')
 def index():
@@ -25,17 +28,10 @@ def submit():
     return render_template('result.html', result=result)
 
 def process_exercise(exercise_text):
-    GENDER = "male"
-    WEIGHT_KG = 63
-    HEIGHT_CM = 170
-    AGE = 21
-
     APP_ID = os.environ.get('APP_ID')
     API_KEY = os.environ.get('API_KEY')
     SHEET_ENDPOINT = os.environ.get('SHEET_ENDPOINT')
     TOKEN = os.environ.get('TOKEN')
-
-    exercise_endpoint = "https://trackapi.nutritionix.com/v2/natural/exercise"
 
     headers = {
         "x-app-id": APP_ID,
@@ -62,14 +58,14 @@ def process_exercise(exercise_text):
     today_date = datetime.now().strftime("%d/%m/%Y")
     now_time = datetime.now().strftime("%X")
 
-    for exercise in result["exercises"]:
+    for exercise in result.get("exercises", []):
         sheet_input = {
             "workout": {
                 "date": today_date,
                 "time": now_time,
-                "exercise": exercise["name"].title(),
-                "duration": exercise["duration_min"],
-                "calories": exercise["nf_calories"]
+                "exercise": exercise.get("name", "").title(),
+                "duration": exercise.get("duration_min", 0),
+                "calories": exercise.get("nf_calories", 0)
             }
         }
 
