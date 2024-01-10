@@ -19,7 +19,7 @@ exercise_endpoint = "https://trackapi.nutritionix.com/v2/natural/exercise"
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('result.html')
 
 @app.route('/submit', methods=['POST'])
 def submit():
