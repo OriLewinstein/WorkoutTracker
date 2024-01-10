@@ -1,33 +1,35 @@
-name: Deploy to GitHub Pages
+name: Build and Deploy
 
 on:
   push:
     branches:
-      - main
+      - main  # Adjust the branch name as needed
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+    - name: Checkout Repository
+      uses: actions/checkout@v2
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.x
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+    - name: Install Dependencies
+      run: |
+        pip install -r requirements.txt
 
-      - name: Deploy
-        env:
-          APP_ID: ${{ secrets.APP_ID }}
-          API_KEY: ${{ secrets.API_KEY }}
-          SHEET_ENDPOINT: ${{ secrets.SHEET_ENDPOINT }}
-          TOKEN: ${{ secrets.TOKEN }}
-        run: |
-          python main.py
+    - name: Run Tests  # Add this step if you have tests to run
+      run: |
+        # Add commands to run tests
+
+    - name: Deploy
+      env:
+        APP_ID: ${{ secrets.APP_ID }}
+        API_KEY: ${{ secrets.API_KEY }}
+        SHEET_ENDPOINT: ${{ secrets.SHEET_ENDPOINT }}
+        TOKEN: ${{ secrets.TOKEN }}
+      run: python main.py
